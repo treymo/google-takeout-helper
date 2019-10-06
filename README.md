@@ -1,4 +1,20 @@
 
+# Install
+1. Install ImageMagick version 7 with HEIC support.
+  * uninstall default libhefi
+  * build and install libheif-1.5.1 manually from source. This was required for
+    me on Ubuntu to build ImageMagick 7 correctly with HEIC support.
+  * `sudo apt install build-essentials libheif-dev`
+  * Download source for ImageMagick 7
+  * Uncomment all 'build-deps's in `/etc/apt/sources.list`
+  * `apt-get build-dep imagemagick`
+  * `./configure --with-heic`
+  * `make`
+  * `sudo make install`
+  * `sudo ldconfig /usr/local/lib`
+1. Install `libmagickwand-dev`?
+1. Install Wand: `pip install Wand`
+
 # Recover your photos from Google Photos
 
 1. Download all `.zip` archives for

@@ -8,8 +8,10 @@ them by default.
 """
 
 import argparse
+import distutils.core
 import fnmatch
 import os
+from wand.image import Image
 import zipfile
 
 def dir_path(string):
@@ -49,6 +51,20 @@ def unzip_archives(takeout_dir):
             zip_ref.extractall(takeout_dir)
 
 
+def convert_heic_files(takeout_dir):
+    for dirpath, _, filenames in os.walk(os.path.join(takeout_dir,
+                                                      *PHOTOS_SUBDIR)):
+        heic_files = [os.path.join(dirpath, name) for name in filenames if
+                      name.endswith('.HEIC')]
+
+        for heic_file in heic_files:
+            with Image(filename=heic_file) as original:
+                with original.convert('jpeg') as converted:
+                    jpg_file = os.path.splitext(heic_file)[0] + '.jpg'
+                    print('Saved converted JPG: ', jpg_file)
+                    converted.save(filename=jpg_file)
+
+
 def delete_metadata_files(takeout_dir):
     """Deletes all metadata files in the Photos data."""
     for dirpath, _, filenames in os.walk(os.path.join(takeout_dir,
@@ -76,9 +92,14 @@ def main():
     args = PARSER.parse_args()
     unzip_archives(args.takeout_dir)
 
+    answer = input("Convert HEIC to JPG and keep original? y/n: ")
+    answer = distutils.util.strtobool(answer)
+    if answer:
+        convert_heic_files(args.takeout_dir)
+
     # Clean up.
     answer = input("Delete all takeout archives? y/n: ")
-    answer = True if answer == 'y' else False
+    answer = distutils.util.strtobool(answer)
     clean_up(args.takeout_dir, answer)
 
 if __name__ == "__main__":
