@@ -1,5 +1,6 @@
 
 # Install
+1. Make sure Python 3 is installed as well as `pip` for python 3
 1. Install ImageMagick version 7 with HEIC support.
   * uninstall default libhefi
   * build and install libheif-1.5.1 manually from source. This was required for
