@@ -130,7 +130,6 @@ def _maybe_extract_email_attachments(mbox_file_path):
 # TODO: Break out photos into its own module.
 def main():
     args = PARSER.parse_args()
-
     _maybe_organize_photos_takeout(args.takeout_dir)
     _maybe_extract_email_attachments(args.mbox_file)
 
