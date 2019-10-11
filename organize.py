@@ -14,6 +14,8 @@ import os
 from wand.image import Image
 import zipfile
 
+import mail
+
 def dir_path(string):
     """Determines if the argument is an existing directory."""
     if os.path.isdir(string):
@@ -25,9 +27,11 @@ def dir_path(string):
 PARSER = argparse.ArgumentParser(description=('Extract images and videos from a'
                                               ' directory of Google Photos '
                                               'Takeout archives.'))
-PARSER.add_argument('takeout_dir', type=dir_path,
+PARSER.add_argument('--takeout_dir', type=dir_path,
                     help='The directory containing Google Photos takeout '
                     'archives (i.e. one or multiple zip file)')
+PARSER.add_argument('--mbox_file',
+                    help='The mbox file with Gmail takeout data.')
 
 # Path to the Google Photos data directory in the extracted takeout data.
 # When extracted the photos will be in: <takeout_dir>/Takeout/Google Photos/
@@ -85,22 +89,50 @@ def clean_up(takeout_dir, delete_archives=False):
             print('deleting archive: ', archive)
             os.remove(archive)
     else:
-        print("Not deleting archives.")
+        print('Not deleting archives.')
 
 
-def main():
-    args = PARSER.parse_args()
-    unzip_archives(args.takeout_dir)
+def _maybe_organize_photos_takeout(takeout_dir):
+    if not takeout_dir:
+        print('Invalid (or no) Photos takeout archive directory specified. Not '
+              'extracting photos from archives.')
+        return
+    else:
+        organize_photos = input('Organize Photos takeout archives? y/n: ')
+        organize_photos = distutils.util.strtobool(organize_photos)
+        if not organize_photos:
+            return
 
-    answer = input("Convert HEIC to JPG and keep original? y/n: ")
+    unzip_archives(takeout_dir)
+
+    answer = input('Convert HEIC to JPG and keep original? y/n: ')
     answer = distutils.util.strtobool(answer)
     if answer:
-        convert_heic_files(args.takeout_dir)
+        convert_heic_files(takeout_dir)
 
     # Clean up.
-    answer = input("Delete all takeout archives? y/n: ")
+    answer = input('Delete all takeout archives? y/n: ')
     answer = distutils.util.strtobool(answer)
-    clean_up(args.takeout_dir, answer)
+    clean_up(takeout_dir, answer)
 
-if __name__ == "__main__":
+
+def _maybe_extract_email_attachments(mbox_file_path):
+    if (mbox_file_path and os.path.isfile(mbox_file_path) and
+            mbox_file_path.endswith('.mbox')):
+        answer = input('Extract mailbox attachments? y/n: ')
+        answer = distutils.util.strtobool(answer)
+        if answer:
+            mail.extract_mail_attachments(mbox_file_path)
+    else:
+        print('Invalid (or no) .mbox path specified. Not extracting email '
+              'attachments.')
+
+# TODO: Break out photos into its own module.
+def main():
+    args = PARSER.parse_args()
+
+    _maybe_organize_photos_takeout(args.takeout_dir)
+    _maybe_extract_email_attachments(args.mbox_file)
+
+if __name__ == '__main__':
     main()
