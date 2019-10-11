@@ -1,3 +1,7 @@
+"""
+Module for extracting all attachments from an mbox archive.
+"""
+
 import mailbox
 import os
 
