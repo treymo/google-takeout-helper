@@ -34,9 +34,9 @@
     *  Give you an option to delete the archives after to reclaim some hard
        drive space.
 1. (Strongly recommended) Back up your photos somewhere else.  Google does a ton
-   of work to make sure your images will never get accidentally delete or lost.
-   So much that it's very unlikely you are willing/can afford to have the same
-   level of reliability.  I'm no expert, but I've found [this subreddit's
+   of work to make sure your images will never be accidentally deleted or lost.
+   It's very unlikely you are willing/able/can afford to have the same
+   level of reliability as Google.  I'm no expert, but I've found [this subreddit's
    wiki](https://www.reddit.com/r/DataHoarder/wiki/backups) to be a good
    starting point for learning about how to back up.
 
