@@ -3,8 +3,8 @@
 ## Install
 1. Make sure Python 3 is installed as well as `pip` for python 3
 1. Install ImageMagick version 7 with HEIC support.
-  * uninstall default libhefi
-  * build and install libheif-1.5.1 manually from source. This was required for
+  * uninstall default libhefi (if it's older than 1.51.  If it's >= 1.5.1 you can skip building and installing libheif)
+  * build and install (libheif-1.5.1)[https://github.com/ImageMagick/libheif] manually from source. This was required for
     me on Ubuntu to build ImageMagick 7 correctly with HEIC support.
   * `sudo apt install build-essentials libheif-dev`
   * Download source for ImageMagick 7
