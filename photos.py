@@ -10,7 +10,7 @@ import argparse
 import distutils.core
 import fnmatch
 import os
-from wand.image import Image
+import tarfile
 import zipfile
 
 
@@ -23,21 +23,28 @@ def _list_takeout_archives(takeout_dir):
     """Lists the full path of all Google Takeout archives."""
     dir_files = []
     for filename in os.listdir(takeout_dir):
-        if fnmatch.fnmatch(filename, 'takeout-*.zip'):
+        if filename.startswith("takeout") and (filename.endswith(".zip") or
+                                               filename.endswith(".tgz")):
             dir_files.append(os.path.join(takeout_dir, filename))
     return dir_files
 
 
-def _unzip_archives(takeout_dir):
+def _unarchive_archives(takeout_dir):
     """Extracts all archives to the archive directory."""
     for archive in _list_takeout_archives(takeout_dir):
-        print('unzipping: ', archive)
-        with zipfile.ZipFile(archive, 'r') as zip_ref:
-            zip_ref.extractall(takeout_dir)
+        print('unarchiveing: ', archive)
+        if archive.endswith(".zip"):
+            with zipfile.ZipFile(archive, 'r') as zip_ref:
+                zip_ref.extractall(takeout_dir)
+        else:
+            my_tar = tarfile.open(archive)
+            my_tar.extractall(takeout_dir)
+            my_tar.close()
 
 
 def _convert_heic_files(takeout_dir):
     """Convert HEIC files to JPG in place and keep the original."""
+    from wand.image import Image
     for dirpath, _, filenames in os.walk(os.path.join(takeout_dir,
                                                       *PHOTOS_SUBDIR)):
         heic_files = [os.path.join(dirpath, name) for name in filenames if
@@ -75,7 +82,7 @@ def _clean_up(takeout_dir, delete_archives=False):
 
 
 def organize_photos_takeout(takeout_dir):
-    _unzip_archives(takeout_dir)
+    _unarchive_archives(takeout_dir)
 
     answer = input('Convert HEIC to JPG and keep original? y/n: ')
     answer = distutils.util.strtobool(answer)
