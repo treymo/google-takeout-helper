@@ -7,8 +7,6 @@ import argparse
 import distutils.core
 import os
 
-import mail
-import photos
 
 def dir_path(string):
     """Determines if the argument is an existing directory."""
@@ -38,6 +36,7 @@ def _maybe_organize_photos_takeout(takeout_dir):
         organize_photos = distutils.util.strtobool(organize_photos)
         if not organize_photos:
             return
+    import photos
     photos.organize_photos_takeout(takeout_dir)
 
 
@@ -47,6 +46,7 @@ def _maybe_extract_email_attachments(mbox_file_path):
         answer = input('Extract mailbox attachments? y/n: ')
         answer = distutils.util.strtobool(answer)
         if answer:
+            import mail
             mail.extract_mail_attachments(mbox_file_path)
     else:
         print('Invalid (or no) .mbox path specified. Not extracting email '
